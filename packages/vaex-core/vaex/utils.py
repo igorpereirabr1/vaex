@@ -200,11 +200,19 @@ class Timer(object):
 
 
 def get_private_dir(subdir=None, *extra):
-    path = os.path.expanduser('~/.vaex')
+    #Custom databricks fix --igor l pereira
+    try:
+        dbutils.fs.ls("dbfs:/tmp/vaex")
+    except:
+        dbutils.fs.mkdirs("/tmp/vaex/")
+    path = os.path.expanduser('/tmp/vaex')
     if subdir:
         path = os.path.join(path, subdir, *extra)
-    if not os.path.exists(path):
-        os.makedirs(path)
+    try:
+        dbutils.fs.ls(path)
+    except:
+        dbutils.fs.mkdirs(path)
+        #os.makedirs(path)
     return path
 
 
